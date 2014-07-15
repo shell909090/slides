@@ -1,0 +1,319 @@
+
+<!doctype html>  
+<html lang="en">
+  <head>
+    <title>python</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="reveal/main.css">
+    <link rel="stylesheet" href="reveal/default.css" id="theme">
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="reveal/lib/css/zenburn.css">
+    <script>
+      // If the query includes 'print-pdf' we'll use the PDF print sheet
+      document.write( '<link rel="stylesheet" href="reveal/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+    </script>
+  </head>
+  <body>
+    <script src="reveal/lib/js/head.min.js"></script>
+    <script src="reveal/reveal.min.js"></script>
+
+    <div class="reveal">
+      <div class="state-background"></div>
+
+      <div class="slides">
+	<section>
+	  <h1>非主力语言的python教程</h1>
+<h1>python是什么</h1>
+<ul>
+<li>动态类型脚本语言</li>
+<li>速度大约是C的1/30</li>
+<li>拥有大量的第三方库</li>
+<li>代码风格容易读写</li>
+<li>跨平台</li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>python能做什么？</h1>
+<p>理论上，任何事，包括泡咖啡。</p>
+<p>实际上，一般用于用户有一点程序逻辑基础，快速编写，快速使用。最好在这个领域有成熟的第三方包和广阔的社区。这实际上推荐python被用于以下领域：</p>
+<ul>
+<li>科学计算</li>
+<li>爬虫</li>
+<li>数据分析</li>
+<li>系统脚本</li>
+</ul>
+<p>当然，根据经验，python特别不适合以下用法：</p>
+<ul>
+<li>需要高性能计算的（请去C）</li>
+<li>需要嵌入到其他程序内部的（请优先考虑lua）</li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>python能做什么</h1>
+<h2>计算器</h2>
+<p>没啥好多说的。</p>
+<pre><code>(1+2+3+4+5)*6
+90
+</code></pre>
+<p>好处是。</p>
+<ol>
+<li>可以用上下调出曾经计算过的表达式，修改内容。</li>
+<li>支持任意高级计算过程，只要python内有。</li>
+<li>python内没有的可以引入第三方包。</li>
+</ol>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h2>base64编码解码</h2>
+<p>解码过程类似。</p>
+<pre><code>&gt;&gt;&gt; s = 'http://www.sina.com.cn'
+&gt;&gt;&gt; import base64
+&gt;&gt;&gt; base64.b64encode(s)
+'aHR0cDovL3d3dy5zaW5hLmNvbS5jbg=='
+</code></pre>
+<p>对于emacs用户而言，其实有更快的方法来做编解码。</p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h2>检验json的合法性</h2>
+<p>例如有个文件abc.json，我们需要检验合法性。</p>
+<pre><code>&gt;&gt;&gt; import json
+&gt;&gt;&gt; with open('abc.json') as fi: obj = json.load(fi)
+</code></pre>
+<p>出错了就是不合法的。</p>
+<p>反过来，我们可以很容易的生成规律性的json。</p>
+<pre><code>json.dumps(dict((i, i % 7) for i in xrange(100)))
+</code></pre>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h2>md5计算</h2>
+<p>通常linux程序员是这样算md5的</p>
+<pre><code>echo -n '123' | md5sum -
+202cb962ac59075b964b07152d234b70  -
+</code></pre>
+<p>这个对非linux用户实在是太高大上了一点，我们换个用法。</p>
+<pre><code>&gt;&gt;&gt; import md5
+&gt;&gt;&gt; h = md5.md5()
+&gt;&gt;&gt; h.update('123')
+&gt;&gt;&gt; h.hexdigest()
+'202cb962ac59075b964b07152d234b70'
+</code></pre>
+<p>不用管是不是linux。</p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h2>生成密码</h2>
+<p>一个网站一个密码才安全（最低限度，一个密级一个密码），但是大量密码怎么生成呢？</p>
+<pre><code>&gt;&gt;&gt; import md5, base64
+&gt;&gt;&gt; h = md5.md5()
+&gt;&gt;&gt; h.update('shell@sina.com')
+&gt;&gt;&gt; base64.b64encode(h.digest())
+'+qv8o16wCMoXVkrQJs3b7w=='
+</code></pre>
+<p>从中截取合适位数。</p>
+<p>优点：一个网站一个密码，网站之间无法互相推导，再也不用担心CSDN啦。</p>
+<p>缺点：每次用的时候都要算一把。</p>
+<p>结论：在手机上装python吧。</p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h2>抽奖</h2>
+<pre><code>&gt;&gt;&gt; import random
+&gt;&gt;&gt; random.seed()
+&gt;&gt;&gt; l = range(1, 100)
+&gt;&gt;&gt; random.shuffle(l)
+&gt;&gt;&gt; l[:3]
+[9, 79, 78]
+</code></pre>
+<p>比较讨厌的是shuffle不支持函数式计算。</p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h2>抓网页</h2>
+<p>这里抓某小说网站的脚本的核心。</p>
+<pre><code>from BeautifulSoup import BeautifulSoup
+def getSection(s, url, name):
+    doc = BeautifulSoup(urllib2.urlopen(url).read())
+    s.write((u'&lt;br/&gt;&lt;h1&gt;%s&lt;/h1&gt;&lt;br/&gt;' % name).encode('utf-8'))
+    s.write(str(doc.find('div', id='content')))
+
+def getNovel(url):
+    global title
+    doc = BeautifulSoup(urllib2.urlopen(url).read())
+    title = doc.find('div', id='title').string
+    for a in doc.findAll('a'):
+        if u'href' not in dict(a.attrs): continue
+        if a['href'].startswith('http'): continue
+        yield '%s/%s' % (path.dirname(url), a['href']), a.string
+
+for url, name in getNovel(sys.argv[1]):
+    getSection(fi, url, name)
+</code></pre>
+<p>整个脚本40行，可以直接从小说网站上把整本小说转成txt文本。</p>
+<p>如果研究的比较深入一些，还可以POST一些数据上去。恩，自动秒杀脚本就是这么干的。当然，要做秒杀脚本，使用浏览器工具链会更加容易一些。</p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h2>抓链接</h2>
+<p>和上面非常类似。</p>
+<pre><code>def getlist(url):
+    doc = BeautifulSoup(urllib.urlopen(url).read())
+    for a in doc.findAll('a'):
+        if u'href' not in dict(a.attrs): continue
+        yield a['href']
+
+def filter_ed2k(s):
+    for a in s:
+        if not a.startswith('ed2k'): continue
+        if a.startswith('ed2k://|subscribe|'): continue
+        yield i.strip()
+</code></pre>
+<p>这个当年是对付verycd的，现在对yyets还有点用。</p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h2>发邮件</h2>
+<p>嘘，不要说是我教的。</p>
+<pre><code>import smtplib
+from email.mime.text import MIMEText
+from contextlib import contextmanager
+
+@contextmanager
+def with_smtp(server, username=None, password=None, ssl=False, debug=False):
+    srv = smtplib.SMTP(server)
+    if ssl:
+        srv.ehlo()
+        srv.starttls()
+        srv.ehlo()
+    if debug: srv.set_debuglevel(1)
+    if username and password: srv.login(username, password)
+    try: yield srv
+    finally: srv.close()
+</code></pre>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  
+<p>下面是业务代码</p>
+<pre><code>def main():
+    with with_smtp('smtp.gmail.com', SENDER, PASSWORD, ssl=True) as srv:
+        msg = MIMEText(body)
+        msg['Subject'] = 'CVE for %s in %s' % (
+            self.dbobj['name'], datetime.now().isoformat())
+        msg['From'] = SENDER
+        msg['To'] = self.dbobj['email']
+        srv.sendmail(SENDER, msg['To'].split(','), msg.as_string())
+</code></pre>
+<p>把这个和上个合起来，就可以做到在某个时间点抓某个网页，如果满足一定条件，就发邮件通知的服务——是的，我们经常用这种用法来抢VPS，或者其他应当有订购通知但是没有的东西。</p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>python能够做什么！</h1>
+<h2>写游戏</h2>
+<p>pygame，使用SDL作为后端，可以用来写游戏。</p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h2>图像处理</h2>
+<p>PIL，基本图像处理。</p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h2>科学计算</h2>
+<p>张若愚有一本专门的书讲述如何使用python做科学计算。</p>
+<ul>
+<li>python自带数字计算</li>
+<li>numpy：线性代数计算</li>
+<li>scipy：科学计算工具箱，包括最优化、线性代数、积分、插值、特殊函数、快速傅里叶变换、信号处理和图像处理、常微分方程求解</li>
+<li>sympy：符号推导</li>
+<li>matplotlib：绘图</li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h2>P2P</h2>
+<p>很少有人知道，BitTorrent这个程序是python写的。</p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h2>mail</h2>
+<ul>
+<li>Mailman：最流行的开源maillist</li>
+<li>SpamBayes：垃圾过滤系统</li>
+</ul>
+
+	</section>
+      </div>
+
+      <!-- The navigational controls UI -->
+      <aside class="controls">
+	<a class="left" href="#">&#x25C4;</a>
+	<a class="right" href="#">&#x25BA;</a>
+	<a class="up" href="#">&#x25B2;</a>
+	<a class="down" href="#">&#x25BC;</a>
+      </aside>
+
+      <!-- Presentation progress bar -->
+      <div class="progress"><span></span></div>
+    </div>
+
+    <script>
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+      controls: true,
+      progress: true,
+      history: true,
+      
+      theme: Reveal.getQueryHash().theme || 'default', // available themes are in /css/theme
+      transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/linear(2d)
+
+      // Optional libraries used to extend on reveal.js
+      dependencies: [
+      { src: 'reveal/lib/js/highlight.js', async: true, callback: function() { window.hljs.initHighlightingOnLoad(); } },
+      { src: 'reveal/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'reveal/lib/js/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'reveal/lib/js/data-markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      ]
+      });
+    </script>
+  </body>
+</html>
