@@ -1,0 +1,204 @@
+<!doctype html>  
+<html lang="en">
+  <head>
+    <title>schemepy</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/css/reveal.css">
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/css/theme/default.css" id="theme">
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/css/zenburn.css">
+    <!-- Include the appropriate print stylesheet -->
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+	<section>
+	  <h1>授权</h1>
+<p>cc-by-sa 3.0 <a href="http://creativecommons.org/licenses/by-sa/3.0/cn/">cn</a> <a href="http://creativecommons.org/licenses/by-sa/3.0/">en</a></p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>解析</h1>
+<p>lisp系列语言的解析器很简单，简单里说，就是匹配括号，形成树。这个在任何一本算法书上都有。有三点细节，一个是引号。在字符串结束前，不需要匹配括号。而且字符串内部还要处理转义。一个是注释，从分号到行结束。最后一个是引用，单引号后面不需要空格。</p>
+
+	    </section>
+	    <section>
+	      <h2>编译</h2>
+<p>解析的结果是python对象，要转换为scheme对象才方便使用。为了简单起见，不需要特别处理的对象，实际上是同功能的python对象来兼容的，包括int，long，float。同时，某些string对象实际上会被转换为其他对象，例如#t和#f。</p>
+<p>scheme对象的核心是OCons，在类lisp语言中，序对被广泛用于列表，树的定义。</p>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>环境</h1>
+<p>执行是lisp的核心。lisp语言的执行有两个对象，一个是执行环境，一个是栈。</p>
+<p>所谓执行环境，就是保存符号和对象对应关系的地方。从语言模型来说，这是一个层级模型。符号应当首先在最内层查找，当内层无法找到对象时逐层向外查找，直到找到为止。</p>
+<pre><code>(define (fib n)
+  (define (fib1 i a b)
+    (if (= i n)
+        a
+        (fib1 (+ i 1) (+ a b) a)))
+  (fib1 1 1 1))
+(display (fib 1))
+(display (fib 2))
+(display (fib 3))
+(display (fib 4))
+(display (fib 5))
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>函数调用和子环境</h2>
+<p>所谓子环境，就是在函数内部有一个自有的子执行环境，保存所有内部的执行结果和中间变量。在每个子函数执行的时候，都应当定义一个子环境。更广泛的说，在每个函数，let的内部，，或者其他需要保存自有的执行环境的地方，都有一个子环境。</p>
+<p>子环境还和函数调用密切相关。调用时的形参和实参对应，实际上是在子环境内，将实参的对象赋值给形参符号的过程。理解了这点，就很容易理解动态参数和命名参数的处理方法。</p>
+
+	    </section>
+	    <section>
+	      <h2>闭包和环境树</h2>
+<p>闭包依赖于子环境又不止于子环境。为了支持闭包，每个生成的函数对象必须保存他生成时的环境栈。</p>
+<p>由于环境需要逐层向上查找，而且环境内又会嵌套环境。因此最终环境会构成类似于树的结构。但是和通常的树相反，树的指向并不是从根到每个叶子，而是从叶子到根。</p>
+
+	    </section>
+	    <section>
+	      <h2>快速查找</h2>
+<p>上述算法是理论算法，为了查找一个对象，需要在多个子环境中进行查询，其效率是O(n)，n是环境深度。在层数比较多的时候，这个会严重拖慢系统速度。</p>
+<p>我们可以想象，对于某个子环境来说，有哪些符号，绑定到哪些值，相对都是固定的，很少调整。因此，查找是频繁操作，而写入不是。对于这种情况，我们可以用缓存来增加查找速度。</p>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>栈</h1>
+
+	    </section>
+	    <section>
+	      <h2>尾递归</h2>
+<p>是否支持尾递归是一个非常重要的特性，因为不支持尾递归的语言，不可以用递归解一些问题。例如fib问题的单递归解法，在不支持尾递归的系统里面很容易跑到栈溢出。</p>
+
+	    </section>
+	    <section>
+	      <h2>trampoline</h2>
+<p>为了支持尾递归，有几种可选做法。我采用了一种叫做trampoline的做法，配合自行实现的栈来实现尾递归。要特别说明的是，为了支持尾递归，系统的执行效率必然有一些下降。这主要是因为在python语言中，list的效率比系统栈更低，而我又不愿意为了这事专门优化一个特殊的list。</p>
+<p>trampoline的核心思想是。在执行某个单次调用时，约定返回分为两种值，普通结果和特殊值。当返回结果是普通结果时，将最上层的待执行对象退栈。当结果为特殊值时，不对执行对象退栈。因此相反，在执行过程中可以对执行栈进行压栈。这样就可以形成三种情况：</p>
+<ul>
+<li>返回普通值：调用返回</li>
+<li>执行过程中压栈，返回特殊值：调用</li>
+<li>执行过程中退栈，再压入新的执行对象，配合返回特殊值：转跳/尾递归</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>传递变量</h2>
+<p>为了达到对普通求值过程的透明，我设计了一个当前传递变量r。并约定tuple为特殊值。任何对象的执行结果不允许为tuple，除非经过特殊包裹。当用户返回一个tuple时，r = r[0]来获得真实的传递变量值。</p>
+<p>当返回普通值时，r为返回值。这个值在下次执行栈顶对象时会被传入，作为调用的返回结果。当r返回tuple时，这个值则是作为调用/转跳/尾递归传递值，传递给执行对象。</p>
+<p>因此，从具体函数的编写角度来考虑，第一次从系统中取得的r值是上层函数所传递的。当函数需要递归调用时，调用栈的call方法，栈会将目标对象压栈，并返回tuple。将tuple返回trampoline函数，就会完成调用过程。</p>
+<p>然后就是相对不好理解的return过程。当栈求值完成时，执行对象会再次执行。传递的参数就不是上层函数的值了，而是调用的返回。</p>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>执行挂起</h1>
+<p>当我们自行控制了执行环境和栈之后，我们就可以在执行的任何时候，将环境和栈序列化，再将来的特定时候重新加载再进行计算。这个任何时候，包括某些需要等待IO输入输出的时候，也可以是等待用户输入的时候。</p>
+<p>从简单来说，这是coroutine，但是没有设计多个上下文切换和调度的功能。从复杂来说，这赋予了程序在某个python环境中执行到一半，代码挂起。在合适的条件下，在另一个python环境中被恢复运行。对此，scheme代码无需感知到差异。</p>
+<p>例如下面的例子:</p>
+<pre><code>(display "user input:")
+(let ((s (raw_input)))
+    (when
+     ((= s "q") (quit))
+     ((= s "t") (display "temp file size"))
+     (#t (quit))
+     ))
+</code></pre>
+<p>其中，raw_input的时候，程序会暂停执行，在web界面上弹出提示框让用户选择。当用户选择了之后，程序才会继续执行。而代码对此一无所知。</p>
+<p>具体的实现上，使用了一种特殊的异常。当触发异常时，就会触发trampoline进行核心转储。从理论上，这个赋予了任何代码状态保留和调试的能力。当然，有些时候保存是无法再执行的，例如已经做了压栈但是环境传递变量还没有跟着更新的时候。</p>
+
+	    </section>
+	    <section>
+	      <h2>coroutine</h2>
+<p>为了完成coroutine，至少还需要一个调度核心。调度核心需要维护一个（或者两个）表，分别记录所有被挂起的上下文，和其中那些已经就绪。具体关于调度核心的内容，可以参考操作系统书中调度队列的描述。</p>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>函数调用</h1>
+
+	    </section>
+	    <section>
+	      <h2>函数调用过程</h2>
+<p>在lisp中调用一个函数非常辛苦的。由于函数是第一类对象，因此可能出现<code>((lambda (x) (* x x)) 10)</code>的语句。因此首先，当希望调用一个函数的时候，必须先对函数本身求值。</p>
+<p>当函数的值已经确定时，我们又要区分两种情况——正则序对象和应用序对象。在scheme里，这个又被称为严格的和非严格的。大部分对象而言，计算应当是严格的。在所有参数计算完成后才进入函数的体。而为了定义内部符号，有部分计算必须是非严格的，例如if。如果将两个分支分别执行完成后才调用if的体，那就没有任何意义了。</p>
+<p>因此，在解释器中有一个标志位，分别判断是否需要严格执行。</p>
+<p>对于严格执行的对象，另一个麻烦是参数求值顺序。一个是右到左求值，另一个是左到右。在实际的代码中，我采用的是右到左顺序。在初始化时将list反转，结果直接append list就可以完成参数的计算。</p>
+
+	    </section>
+	    <section>
+	      <h2>内部符号</h2>
+<p>由于可以定义非严格计算对象，因此我们才可能将所有内部符号的实现独立于scheme执行和解析系统。</p>
+<p>内部符号是在一个叫做builtin的环境中定义的。在任意执行环境中，这是一切的根。因此用户可以定义自己的符号来覆盖系统符号，例如定义自己的if（如果可以解决非严格问题的话）。由于在系统内还没有引入宏，因此实际上是定义不出合法的if的。</p>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>调试</h1>
+<p>trampoline给予了我们一个很方便的调试接口——在每次系统对栈顶求值之前，调用一个调试接口。这个接口就等效于单步中断。在系统中，我实现了两个最简单的调试器——print_step和Debuger。前者会将每次的中间栈状态和传递变量打印出来，便于我们跟踪程序。后者可以显示栈，环境，符号，传递变量，监视栈的增长和退出。不过由于尾递归的特性，这并不等于可以监视调用。基本上，除了breakpoint外，这个调试工具实现了一个调试器所需要的所有功能。</p>
+
+	    </section>
+	    <section>
+	      <h2>打印和格式化</h2>
+<p>为了能够调试，我们对必须可以将对象打印出来。出于简单化的理由，我希望打印出来的源码是可读和可执行的。就是说，将一段代码写好后，执行打印出来的代码和执行源代码应当是完全相同的。</p>
+<p>为此，我设计了调试打印系统，这个系统的执行逻辑和编译相反，将转换的目标树格式化为合适的代码。</p>
+<p>同时，由于对代码格式化的规范性，因此可以将不整齐的代码通过parser读入，从format中打印出去，达到格式化的效果。</p>
+
+	    </section>
+	</section>
+      </div>
+    </div>
+    <script src="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/js/head.min.js"></script>
+    <script src="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/js/reveal.js"></script>
+    <script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+
+    theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+    transition: Reveal.getQueryHash().transition || 'default', // none/fade/slide/convex/concave/zoom
+
+    // Parallax scrolling
+    // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+    // parallaxBackgroundSize: '2100px 900px',
+
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+    ]
+});
+    </script>
+  </body>
+</html>

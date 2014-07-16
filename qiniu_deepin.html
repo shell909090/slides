@@ -1,0 +1,276 @@
+<!doctype html>  
+<html lang="en">
+  <head>
+    <title>qiniu_deepin</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/css/reveal.css">
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/css/theme/default.css" id="theme">
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/css/zenburn.css">
+    <!-- Include the appropriate print stylesheet -->
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+	<section>
+	  <h1>授权</h1>
+<p>cc-by-sa 3.0 <a href="http://creativecommons.org/licenses/by-sa/3.0/cn/">cn</a> <a href="http://creativecommons.org/licenses/by-sa/3.0/">en</a></p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>自我介绍</h1>
+<ul>
+<li>python程序员</li>
+<li>C/C++程序员</li>
+<li>linux深度用户
+<ul>
+<li>debian系用户</li>
+</ul></li>
+</ul>
+<p><img src="http://xuzhixiang.u.qiniudn.com/photo/aboutme.png" alt="" title="" /></p>
+
+	    </section>
+	    <section>
+	      
+<p><img src="http://xuzhixiang.u.qiniudn.com/photo/shell01.jpg" alt="" title="" /></p>
+
+	    </section>
+	    <section>
+	      
+<p>咳咳，刚刚那张不知道为什么有新浪的LOGO，让我们忽略他。</p>
+<p><img src="http://xuzhixiang.u.qiniudn.com/photo/shell01.jpg?imageMogr/crop/!300x250a150a0" alt="" title="" /></p>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>七牛简介</h1>
+<ul>
+<li>2011年创立于上海</li>
+<li>做开发者的数据在线托管，加速，处理</li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>云存储的意义</h1>
+<ul>
+<li>备份</li>
+<li>高可用</li>
+<li>弹性费用计算</li>
+<li>CDN</li>
+</ul>
+
+	    </section>
+	    <section>
+	      
+<ul>
+<li>备份
+<ul>
+<li>备份策略</li>
+<li>如何保证备份成功</li>
+</ul></li>
+<li>高可用
+<ul>
+<li>多机+盘阵</li>
+<li>多节点同步</li>
+<li>其他方案</li>
+</ul></li>
+<li>弹性费用计算
+<ul>
+<li>为峰值留出预量</li>
+</ul></li>
+<li>CDN</li>
+</ul>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>七牛云存储的特色</h1>
+<ul>
+<li>UGC
+<ul>
+<li>减少带宽占用，加速用户上传</li>
+<li>提供回调</li>
+</ul></li>
+<li>数据处理
+<ul>
+<li>不只是图片</li>
+</ul></li>
+<li>丰富的sdk
+<ul>
+<li>C...</li>
+<li>C#</li>
+<li>Java</li>
+<li>nodejs</li>
+<li>php</li>
+<li>ruby</li>
+<li>python</li>
+<li>...</li>
+</ul></li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>图片处理</h1>
+<ul>
+<li>基本信息获取</li>
+<li>EXIF信息获取</li>
+<li>缩略图</li>
+<li>裁剪，旋转</li>
+<li>水印</li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>流媒体处理</h1>
+<ul>
+<li>音频转码</li>
+<li>视频转码</li>
+<li>视频缩略图</li>
+<li>HTTP Live Streaming</li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>文档转换</h1>
+<ul>
+<li>markdown转html</li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>其他</h1>
+<ul>
+<li>数据处理组合</li>
+<li>生成qr码</li>
+<li>结果持久化</li>
+<li>用户提供的任意处理代码</li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>SDK library</h1>
+<ul>
+<li>全部开源</li>
+<li>MIT授权
+<ul>
+<li>可以链接到商业项目中</li>
+<li>可以加入Powered by qiniu</li>
+</ul></li>
+<li>随时update，支持最新feature</li>
+<li>使用github，鼓励用户提交pull request</li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>SDK utils</h1>
+<ul>
+<li>qrsync</li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>实例一，本文档上传</h1>
+<ul>
+<li>申请帐号（10G空间，10G下载，免费），获得ak和sk</li>
+<li>创建空间xuzhixiang</li>
+<li>建立配置文件qiniu.json</li>
+<li>下载<a href="http://docs.qiniu.com/tools/v6/qrsync.html">七牛工具组</a></li>
+<li>执行<code>qrsync qiniu.json</code></li>
+<li>结果在<a href="http://xuzhixiang.u.qiniudn.com/slide/qiniu_deepin.md?md2html">这里</a></li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>实例二，文章开头的图片裁剪</h1>
+<ul>
+<li>原始图片地址：http://xuzhixiang.u.qiniudn.com/photo/shell01.jpg</li>
+<li>裁剪图片地址：http://xuzhixiang.u.qiniudn.com/photo/shell01.jpg?imageMogr/crop/!300x250a150a0</li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>实例二，以html方式阅读本文档</h1>
+<p>在<a href="http://xuzhixiang.u.qiniudn.com/slide/qiniu_deepin.md">url</a>的结尾加上md2html<a href="http://xuzhixiang.u.qiniudn.com/slide/qiniu_deepin.md?md2html">试试</a>。</p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>实例三，经过reveal渲染后的文档</h1>
+<ul>
+<li>执行自己写的工具<a href="https://github.com/shell909090/utils/blob/master/md2slide">md2html</a></li>
+<li>再次执行<code>qrsync qiniu.json</code>，内容会差量上传</li>
+<li>直接访问<a href="http://xuzhixiang.u.qiniudn.com/slide/qiniu_deepin.html">这里</a>，可以看到结果</li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>感谢观赏</h1>
+<p>本文可以猛击<a href="http://xuzhixiang.u.qiniudn.com/slide/qiniu_deepin.html">这里</a></p>
+<p><img src="http://xuzhixiang.u.qiniudn.com/slide/qiniu_deepin.html?qrcode" alt="或者扫这里" title="" /></p>
+
+	</section>
+      </div>
+    </div>
+    <script src="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/js/head.min.js"></script>
+    <script src="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/js/reveal.js"></script>
+    <script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+
+    theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+    transition: Reveal.getQueryHash().transition || 'default', // none/fade/slide/convex/concave/zoom
+
+    // Parallax scrolling
+    // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+    // parallaxBackgroundSize: '2100px 900px',
+
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+    ]
+});
+    </script>
+  </body>
+</html>
