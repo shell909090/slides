@@ -13,7 +13,7 @@
 * [大陆地区网络状况简介](chinanet/chinanet.md)2013-08-03在COSCUP上的演讲
 * [深入介绍七牛云存储](qiniu_deepin.md)2013-09在linux deepin上的演讲
 * [密码强度分析](passwd.md)
-* [docker不是虚拟机](docker.md)
+* [docker不是虚拟机](docker.md) 2014-06-29在云计算和大数据，2014-07-27在SHLUG的演讲
 
 # LICENSE
 
