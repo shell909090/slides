@@ -1,0 +1,366 @@
+<!doctype html>  
+<html lang="en">
+  <head>
+    <title>apt</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/css/reveal.css">
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/css/theme/default.css" id="theme">
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/css/zenburn.css">
+    <!-- Include the appropriate print stylesheet -->
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>dpkg系统</h1>
+
+	    </section>
+	    <section>
+	      <h2>简述</h2>
+<p>用于管理程序安装和删除的基础系统。</p>
+
+	    </section>
+	    <section>
+	      <h2>和make install的区别</h2>
+<ol>
+<li>可以安装和卸载，并且可以管理依赖性关系。</li>
+<li>具有安装和卸载时进行配置管理的能力。</li>
+<li>可以被视做带有元信息，解压前后和删除前后会执行脚本的tar包</li>
+</ol>
+
+	    </section>
+	    <section>
+	      <h2>和apt的区别</h2>
+<ol>
+<li>只能管理系统中已经安装的包</li>
+<li>不解决依赖性问题，只能报错</li>
+<li>不解决可信性问题</li>
+</ol>
+
+	    </section>
+	    <section>
+	      <h2>列出已安装的包和版本</h2>
+<pre><code>dpkg -l
+</code></pre>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>dpkg元信息</h1>
+
+	    </section>
+	    <section>
+	      <h2>包元信息</h2>
+<ol>
+<li>包名</li>
+<li>版本</li>
+<li>架构(arch)</li>
+<li>依赖(Depends)</li>
+<li>推荐(Recommands)</li>
+<li>建议(Suggests)</li>
+<li>描述</li>
+</ol>
+
+	    </section>
+	    <section>
+	      <h2>已安装包的状态</h2>
+<pre><code>dpkg -s &lt;package&gt;
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>查看包属性</h2>
+<pre><code>dpkg -I &lt;debfile&gt;
+</code></pre>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>dpkg内容</h1>
+
+	    </section>
+	    <section>
+	      <h2>包内容</h2>
+<ol>
+<li>所包含的文件，大小，属主，权限，日期</li>
+<li>安装前后脚本(preinst/postinst)</li>
+<li>卸载前后脚本(prerm/postrm)</li>
+<li>冲突文件(conffiles)</li>
+</ol>
+
+	    </section>
+	    <section>
+	      <h2>列出包里面包含的文件</h2>
+<pre><code>dpkg -L &lt;package&gt;
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>查看包内容</h2>
+<pre><code>dpkg -c &lt;debfile&gt;
+</code></pre>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>dpkg配置</h1>
+
+	    </section>
+	    <section>
+	      <h2>debconf</h2>
+<p>用于配置包的交互系统。</p>
+
+	    </section>
+	    <section>
+	      <h2>包状态</h2>
+<ol>
+<li>Status: Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend</li>
+<li>Err: (none)/Reinst-required (Status,Err: uppercase=bad)</li>
+</ol>
+<p>状态标明了包在系统中处于哪个阶段。</p>
+
+	    </section>
+	    <section>
+	      <h2>安装包</h2>
+<pre><code>dpkg -i &lt;debfile&gt;
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>删除包</h2>
+<pre><code>dpkg -r &lt;package&gt;
+</code></pre>
+<p>删除配置</p>
+<pre><code>dpkg -P &lt;package&gt;
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>配置继续</h2>
+<pre><code>dpkg --configure -a
+</code></pre>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>dpkg杂项</h1>
+
+	    </section>
+	    <section>
+	      <h2>查找某个文件属于哪个包</h2>
+<pre><code>dpkg -S filepath
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>不安装解开包内容</h2>
+<pre><code>dpkg -x &lt;debfile&gt; &lt;target&gt;
+</code></pre>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>apt系统</h1>
+
+	    </section>
+	    <section>
+	      <h2>简述</h2>
+<p>用于管理程序源的基础系统。</p>
+
+	    </section>
+	    <section>
+	      <h2>包列表</h2>
+<p>整个系统中所列的所有源里面载明的包列表。</p>
+<p>列表里面有数据，指明某个包可以在哪个url取得，大小多少，md5/sha1/sha256。因此下载列表所指明的文件是不会遭到替换的(碰撞算法不算)。</p>
+
+	    </section>
+	    <section>
+	      <h2>更新包列表</h2>
+<pre><code>apt-get update
+aptitude update
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>下载包</h2>
+<pre><code>apt-get download &lt;package&gt;
+aptitude download &lt;package&gt;
+</code></pre>
+<p>下载源码</p>
+<pre><code>apt-get source &lt;package&gt;
+aptitude source &lt;package&gt;
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>安装</h2>
+<pre><code>apt-get install &lt;package&gt;
+aptitude install &lt;package&gt;
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>删除</h2>
+<pre><code>apt-get remove &lt;package&gt;
+aptitude remove &lt;package&gt;
+</code></pre>
+<p>删除带配置</p>
+<pre><code>apt-get purge &lt;package&gt;
+aptitude purge &lt;package&gt;
+</code></pre>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>apt源</h1>
+
+	    </section>
+	    <section>
+	      <h2>源配置</h2>
+<p>/etc/apt/sources.list文件中，每行指明一个源。</p>
+<pre><code>deb http://192.168.1.22:9999/debian/ wheezy main contrib non-free
+</code></pre>
+<ol>
+<li>第一部分指明是二进制源(deb)还是源码源(deb-src)。</li>
+<li>第二部分指明基url。</li>
+<li>第三部分指明release。</li>
+<li>第四部分和后续指明category。</li>
+</ol>
+
+	    </section>
+	    <section>
+	      <h2>源的三要素</h2>
+<ol>
+<li>release，指发行版本。例如wheezy/stable, jessie/testing, sid/unstable，或者是precise/lucid等。</li>
+<li>category，仓库分类。可自行选定的仓库分类，大部分发行上只有一个，即main。但是有补充，例如debian的non-free和ubuntu的restricted。</li>
+<li>arch，cpu架构。无需指定安装时固定。可以用dpkg --print-architecture查看和管理。debian目前已经支持multiarch，但是效果不好说。</li>
+</ol>
+
+	    </section>
+	    <section>
+	      <h2>可信赖源</h2>
+<p>源给出的包列表使得下载包是安全的，但是包列表本身还可能遭到替换。为了解决这个问题，需要对包列表进行签名。apt使用的是gpg签名系统。在每个系统上，都安装了可信签名公钥。</p>
+<pre><code>sudo apt-key list
+</code></pre>
+<p>凡是经过可信密钥签名的仓库，都是可信仓库。而非可信仓库添加进去的第一件事，就是添加签名公钥。</p>
+
+	    </section>
+	    <section>
+	      <h2>自建源缓存</h2>
+<p>安装approx，修改/etc/approx/approx.conf</p>
+<p>每行一条，开始指明缓存路径，后续指明上游目标。例如：</p>
+<pre><code>debian          http://mirrors.ustc.edu.cn/debian
+ubuntu          http://mirrors.163.com/ubuntu
+gplhost         http://mirrors.shell909090.org/gplhost
+</code></pre>
+<p>第一条说明<a href="http://server:9999/debian">http://server:9999/debian</a>映射到<a href="http://mirrors.ustc.edu.cn/debian">http://mirrors.ustc.edu.cn/debian</a>。后续同。第三条为openstack在wheezy上的backport附加源。</p>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>依赖求解</h1>
+
+	    </section>
+	    <section>
+	      <h2>依赖关系图</h2>
+<ol>
+<li>Depends, Recommands。</li>
+<li>依赖版本&gt;=和==。</li>
+</ol>
+
+	    </section>
+	    <section>
+	      <h2>手工安装和依赖安装</h2>
+<pre><code>aptitude search '.*' | grep '^i'
+apt-mark showmanual
+apt-mark showauto
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>冲突</h2>
+<pre><code>apt-cache show nginx-light
+Conflicts: nginx-extras, nginx-full, nginx-naxsi
+</code></pre>
+<p>冲突主要用于解决有相同路径的文件，具有替代功能的程序，或不兼容的版本。</p>
+
+	    </section>
+	    <section>
+	      <h2>版本升级</h2>
+<pre><code>apt-get upgrade
+aptitude upgrade
+</code></pre>
+<p>在版本升级中，很容易出现冲突。例如新包依赖于一个新的库，但是系统中某个未升级的程序依赖于一个老的库。两者都是强制依赖，因此不能同时存在于系统中。</p>
+
+	    </section>
+	    <section>
+	      <h2>冲突解决方案</h2>
+<p>使用aptitude，进入后可以看到冲突的存在。按E查看冲突解决方案，或调整方案。</p>
+<p>最有效的方法是自行求解。通过自行标记某些包为安装或删除状态，解除冲突。</p>
+
+	    </section>
+	    <section>
+	      <h2>只升级安全补丁</h2>
+<pre><code>unattended-upgrades
+</code></pre>
+<p>由于升级的量更小，因此几乎不可能碰到冲突。</p>
+
+	    </section>
+	</section>
+      </div>
+    </div>
+    <script src="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/js/head.min.js"></script>
+    <script src="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/js/reveal.js"></script>
+    <script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+
+    theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+    transition: Reveal.getQueryHash().transition || 'default', // none/fade/slide/convex/concave/zoom
+
+    // Parallax scrolling
+    // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+    // parallaxBackgroundSize: '2100px 900px',
+
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+    ]
+});
+    </script>
+  </body>
+</html>
