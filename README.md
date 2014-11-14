@@ -16,6 +16,7 @@
 * [docker不是虚拟机](http://htmlpreview.github.io/?https://raw.githubusercontent.com/shell909090/slides/master/md/docker.html) ([source](md/docker.md)) 2014-06-29在云计算和大数据，2014-07-27在SHLUG的演讲
 * [开源许可协议漫说](http://htmlpreview.github.io/?https://raw.githubusercontent.com/shell909090/slides/master/md/lic.html) ([source](md/lic.md)) ([tip](md/lic_tip.md)) 2014-07-25在华东师范大学2014年暑期学校培训的演讲
 * [简说apt包管理系统](http://htmlpreview.github.io/?https://raw.githubusercontent.com/shell909090/slides/master/md/apt.html) ([source](md/apt.md)) 2014-08-28在七牛的培训
+* [上下文切换技术简介](http://htmlpreview.github.io/?https://raw.githubusercontent.com/shell909090/slides/master/context/context_slide.html) ([source](context/context_slide.md)) ([tip](context/context.md)) ([test](context/context_test.md)) 2014-11-14在七牛的培训，2014-11-15在PyCon2014上的演讲
 
 # LICENSE
 

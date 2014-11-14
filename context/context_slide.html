@@ -1,0 +1,312 @@
+<!doctype html>  
+<html lang="en">
+  <head>
+    <title>context_slide</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/css/reveal.css">
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/css/theme/default.css" id="theme">
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/css/zenburn.css">
+    <!-- Include the appropriate print stylesheet -->
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>上下文切换技术简介</h1>
+
+	    </section>
+	    <section>
+	      <h2>logo</h2>
+<p><img src="PyConChina2014-stick-logo.png" alt="PyConChina2014-stick-logo.png" title="" /></p>
+
+	    </section>
+	    <section>
+	      <h2>自我介绍</h2>
+<p>shell909090，七牛程序员，主要用python和golang。</p>
+
+	    </section>
+	    <section>
+	      <h2>LICENSE</h2>
+<p><a href="http://creativecommons.org/licenses/by-sa/3.0/deed.zh">cc-by-sa3.0</a></p>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>系统级上下文技术</h1>
+
+	    </section>
+	    <section>
+	      <h2>术语</h2>
+<ul>
+<li>上下文</li>
+<li>切换</li>
+<li>调度</li>
+<li>进程</li>
+<li>线程</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>进程状态</h2>
+<ul>
+<li>就绪</li>
+<li>运行</li>
+<li>睡眠</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>性能</h2>
+<ul>
+<li>fork的开销在40-50us不等</li>
+<li>pthread(nptl)的开销在9.5us左右</li>
+</ul>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>传统网络服务模型</h1>
+
+	    </section>
+	    <section>
+	      <h2>如何工作</h2>
+<ol>
+<li>父进程监听服务端口</li>
+<li>在有新连接建立的时候，父进程执行fork，产生一个子进程副本</li>
+<li>如果子进程需要的话，可以exec(例如CGI)</li>
+<li>父进程执行(理论上应当先执行子进程，因为exec执行的快可以避免COW)到accept后，发生阻塞</li>
+<li>上下文调度，内核调度器选择下一个上下文，如无意外，应当就是刚刚派生的子进程</li>
+<li>子进程进程进入读取处理状态，阻塞在read调用上，所有上下文均进入睡眠态</li>
+<li>随着SYN或者数据报文到来，CPU会唤醒对应fd上阻塞的上下文(wait_queue)，切换到就绪态，并加入调度队列</li>
+<li>上下文继续执行到下一个阻塞调用，或者因为时间片耗尽被挂起</li>
+</ol>
+
+	    </section>
+	    <section>
+	      <h2>评价</h2>
+<ul>
+<li>同步模型，编写自然，每个上下文可以当作其他上下文不存在一样的操作，每次读取数据可以当作必然能读取到。</li>
+<li>进程模型自然的隔离了连接。即使程序复杂且易崩溃，也只影响一个连接而不是在整个系统。</li>
+<li>生成和释放开销很大(效率测试的进程fork和线程模式开销测试)，需要考虑复用。</li>
+<li>进程模式的多客户通讯比较麻烦，尤其在共享大量数据的时候。</li>
+</ul>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>C10K问题</h1>
+
+	    </section>
+	    <section>
+	      <h2>上下文重复建立开销</h2>
+<p>通过上下文池和复用上下文解决。</p>
+
+	    </section>
+	    <section>
+	      <h2>线程复用模式的问题</h2>
+<ul>
+<li>内存</li>
+<li>内核陷入</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>内核调度器</h2>
+<ol>
+<li>linux2.4的调度器。</li>
+<li>O(1)调度器。</li>
+<li>CFS。</li>
+</ol>
+
+	    </section>
+	    <section>
+	      <h2>开销</h2>
+<p>yield每次耗费的时间随活跃线程数变化曲线</p>
+<p><img src="t_yield.png" alt="t_yield.png" title="" /></p>
+
+	    </section>
+	    <section>
+	      
+<p>lock每次耗费的时间随活跃线程书变化曲线</p>
+<p><img src="t_lock.png" alt="t_lock.png" title="" /></p>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>多路复用</h1>
+
+	    </section>
+	    <section>
+	      <h2>就绪通知 vs 异步IO</h2>
+<ul>
+<li>由用户读取 vs 由系统回调</li>
+<li>在数据就绪时通知 vs 在数据IO完成后回调</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>epoll</h2>
+<ul>
+<li>ET</li>
+<li>LT</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>性能分析</h2>
+<ul>
+<li>epoll_wait/ep_poll_callback</li>
+<li>epoll_ctl</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>固有缺陷</h2>
+<p>无法用于普通文件。</p>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>事件通知机制下的程序设计模型</h1>
+
+	    </section>
+	    <section>
+	      <h2>用户态调度</h2>
+<p>如何在fd未就绪时接着服务其他连接？</p>
+<p>将对应fd映射到处理这个fd的某组过程上的结构设计，被称为用户态调度。这样，当我们知道某个fd就绪时，可以激活对应的过程。</p>
+<p>更广义的说，各种内核态带有wait_queue的对象，都应当可以映射到某组过程上。例如时钟和锁。因此用户态调度可类比于内核态调度。</p>
+
+	    </section>
+	    <section>
+	      <h2>coroutine</h2>
+<p>从图灵机的角度来说，整个机器的状态必然保存在有限个寄存器内。保存寄存器就是保存机器的执行状态。</p>
+<p>程序执行两个栈——执行栈和环境栈。只要保存下执行栈就可以重启执行。</p>
+
+	    </section>
+	    <section>
+	      <h2>协程和线程的关系和区别</h2>
+<ul>
+<li>协程无法跨进程调度</li>
+<li>协程要获得CPU，必须在线程中执行</li>
+<li>同时执行的协程数不能大于容纳他的线程数</li>
+<li>协程没有抢占</li>
+<li>单线程中执行的协程，可以视为单线程应用</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>golang协程性能</h2>
+<p>sched调用延迟随goroutine数变化</p>
+<p><img src="g_sched.png" alt="g_sched.png" title="" /></p>
+
+	    </section>
+	    <section>
+	      
+<p>chan调用延迟随goroutine数变化</p>
+<p><img src="g_chan.png" alt="g_chan.png" title="" /></p>
+
+	    </section>
+	    <section>
+	      
+<p>lock调用延迟随goroutine数变化</p>
+<p><img src="g_lock.png" alt="g_lock.png" title="" /></p>
+
+	    </section>
+	    <section>
+	      <h2>python协程性能</h2>
+<ul>
+<li>yield的开销大约是22ns</li>
+<li>greenlet的开销大约是500ns</li>
+</ul>
+
+	    </section>
+	    <section>
+	      
+<p>yield from随层数变化</p>
+<p><img src="py_yield_from.png" alt="py&lt;em&gt;yield&lt;/em&gt;from.png" /><em>yield</em>from.png" title="" /&gt;</p>
+
+	    </section>
+	    <section>
+	      <h2>基于就绪通知的协程框架</h2>
+<ol>
+<li>首先需要包装read/write，在发生read的时候检查返回。如果是EAGAIN，那么将当前协程标记为阻塞在对应fd上，然后执行调度函数。</li>
+<li>调度函数需要执行epoll(或者从上次的返回结果缓存中取数据，减少内核陷入次数)，从中读取一个就绪的fd。如果没有，上下文应当被阻塞到至少有一个fd就绪。</li>
+<li>查找这个fd对应的协程上下文对象，并调度过去。</li>
+<li>当某个协程被调度到时，他多半应当在调度器返回的路上——也就是read/write读不到数据的时候。因此应当再重试读取，失败的话返回1。</li>
+<li>如果读取到数据了，直接返回。</li>
+</ol>
+<p>这样，异步的数据读写动作，在我们的想像中就可以变为同步的。而我们知道同步模型会极大降低我们的编程负担。</p>
+
+	    </section>
+	    <section>
+	      <h2>CPS模型</h2>
+<p>所谓回调模型就是，在IO调用的时候，同时传入一个函数，作为返回函数。当IO结束时，调用传入的函数来处理下面的流程。</p>
+<p>用一句话来描述CPS——他把一切操作都当作了IO，无论干什么，结果要通过回调函数来返回。从这个角度来说，IO回调模型只能被视作CPS的一个特例。</p>
+<pre><code>add = lambda f, *nums: f(sum(nums))
+mul = lambda f, *nums: f(reduce(lambda x,y: x*y, nums))
+mul(lambda x: add(pprint.pprint, x, 1), 2, 3)
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>函数组件和返回值</h2>
+<p>函数为什么要用栈来描述层级调用关系？</p>
+
+	    </section>
+	    <section>
+	      <h2>回调函数的上下文环境</h2>
+<p>回调函数基本可以认同在一个独立的上下文中执行。</p>
+
+	    </section>
+	</section>
+      </div>
+    </div>
+    <script src="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/js/head.min.js"></script>
+    <script src="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/js/reveal.js"></script>
+    <script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+
+    theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+    transition: Reveal.getQueryHash().transition || 'default', // none/fade/slide/convex/concave/zoom
+
+    // Parallax scrolling
+    // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+    // parallaxBackgroundSize: '2100px 900px',
+
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+    ]
+});
+    </script>
+  </body>
+</html>
