@@ -331,13 +331,3 @@ yield from需要在python3下执行，从数据上看，python3下执行循环�
 * time var = 0.0115
 
 单次调度开销高达167.3ns，仅比系统的sched在高线程下略快。这事很奇怪，因为根据我看到的源码(glibc-2.19/sysdeps/unix/sysv/linux/x86_64/setcontext.S)，getcontext/setcontext在glibc中是用汇编实现的。其中陷入内核只是为了设定signal mask。
-
-# 服务器性能测试
-
-## 进程模式
-
-## 线程模式
-
-## 线程池模式
-
-## gevent模式
