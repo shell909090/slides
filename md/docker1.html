@@ -1,0 +1,399 @@
+<!doctype html>  
+<html lang="en">
+  <head>
+    <title>docker1</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/css/reveal.css">
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/css/theme/default.css" id="theme">
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/css/zenburn.css">
+    <!-- Include the appropriate print stylesheet -->
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>原理</h1>
+
+	    </section>
+	    <section>
+	      <h2>chroot</h2>
+<ul>
+<li>最原始的隔离容器</li>
+<li>只改变进程的文件系统（从而使得进程的环境发生变化），不改变其他</li>
+<li>可以看到其他进程，打开网络，发送消息</li>
+<li>经常配合用户权限控制系统做jail</li>
+<li>但是在jail内的应用能够了解自己并没有root权限（例如无法新建用户）</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>namespace</h2>
+<ul>
+<li>多种对象隔离，例如IPC，网络</li>
+<li>一个进程只能属于一个ns，一个ns可以拥有多个进程</li>
+<li>进程的子进程默认属于同一个ns</li>
+<li>有些东西不在隔离范围内</li>
+</ul>
+<p>如果将用户隔离在ns内，删除CAP_SYS_ADMIN，删除对主机设备的访问，删除mount能力(以及其他适当权限)。即使是root用户也无法访问主机。因此，namespace配合chroot可以完美的切换用户环境。用户感知自己是root，可以做root权限的很多行为，例如添加删除用户。只有和系统有关的行为无法进行，例如加载内核模块。</p>
+
+	    </section>
+	    <section>
+	      
+<p>隔离种类</p>
+<ul>
+<li>uts: 简单来说等价于hostname</li>
+<li>ipc: 共享内存，信号两，消息队列等</li>
+<li>pid: 进程编号</li>
+<li>mount: 可挂载的文件系统</li>
+<li>user: 用户/uid映射系统</li>
+<li>network: 网络设备隔离</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>cgroup</h2>
+<p>虽然namespace可以隔离用户，但是却不能隔离用户的资源使用量。</p>
+<p>cgroup主要是将环境所需资源尽量限制在一个范围内。</p>
+<p>主要功能：</p>
+<ul>
+<li>限制资源使用：例如内存使用上限，CPU亲缘性</li>
+<li>控制优先级：例如CPU优先级</li>
+<li>记账：例如内存水平和CPU使用情况</li>
+<li>控制：挂起和继续</li>
+</ul>
+
+	    </section>
+	    <section>
+	      
+<p>无法控制：</p>
+<ul>
+<li>目前为止，最大CPU用量无法控制，只能控制CPU亲缘性。</li>
+<li>就我测试的结果，内存用量和ps统计的值略有偏差。</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>lxc</h2>
+<p>结合namespace和cgroup做的虚拟机，和openvz类似。</p>
+<p>docker在linux下使用lxc作为其底层，在windows下据说可以使用其他底层。</p>
+
+	    </section>
+	    <section>
+	      <h2>aufs</h2>
+<p>aufs是一个多层的混合文件系统（Union file system）。</p>
+<ul>
+<li>多层的文件系统栈，可写的在最上</li>
+<li>当读取文件时，从上到下查找</li>
+<li>当写入文件时，写入最上层的可写系统。</li>
+<li>如果可写系统内不存在原始文件，首先复制。</li>
+</ul>
+<p>因此写入的数据会覆盖原始数据，形成一个可读写文件系统的假象。</p>
+<p>经常被用来给只读设备加上临时的可写特性，例如Live CDs。</p>
+
+	    </section>
+	    <section>
+	      
+<p>特性：</p>
+<ul>
+<li>可以指定多个可读文件系统（有顺序）</li>
+<li>可以指定一个可写文件系统</li>
+<li>最高可达127层</li>
+<li>原生文件级的读写效率</li>
+<li>在文件查找时和复制原始文件到可写系统时有开销</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>docker</h2>
+<p>docker是基于lxc和aufs实现的容器系统，其主要目标是专注于将环境带到不同的机器上。</p>
+<p>换句话说，如果不是和环境有关的问题，并不需要使用docker。</p>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>概念</h1>
+<ul>
+<li>镜像: 一个可运行的环境(例如文件系统)，但尚未有任何程序载入内存。</li>
+<li>容器: 载入内存的镜像，其中包含一个或多个镜像（层叠）。</li>
+<li>仓库: 某个网络上的位置，通常是docker hub，也可以指定一个自己的服务器(register server)。</li>
+<li>tag: 标签，用来标记仓库中的某个特定版本。</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>工作模式</h2>
+<p>每个镜像是一个文件系统，可以依赖于另一个文件系统。在实际使用的时候，将镜像和其依赖链组成aufs链条。因此新的镜像内容会覆盖老的（如果存在同名）。</p>
+<p>将镜像内的任何一个程序载入内存运行，即成为容器。一个容器内至少需要包含一个进程，可以包含多个。</p>
+<p>将镜像（和其依赖的链条）上传到某个文件服务器，该文件服务器即是仓库。一个仓库可以包含多个镜像，一般使用镜像的hash值的一部分作为镜像的ID。</p>
+<p>为了简化仓库存取，为每个ID取的别名。</p>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>用法</h1>
+
+	    </section>
+	    <section>
+	      <h2>启动和终止容器</h2>
+<p>用以下指令启动一个容器。</p>
+<pre><code>docker run [-i] [-d] [仓库]:[tag] cmds
+</code></pre>
+<ul>
+<li>-i: 交互模式。一般配合-t使用。</li>
+<li>-d: daemon模式。在后台启动程序并且detach。</li>
+</ul>
+<p>PS. 如果镜像不存在，会从远程下载。</p>
+
+	    </section>
+	    <section>
+	      
+<p>用以下指令终止容器。</p>
+<pre><code>docker stop [容器id]
+</code></pre>
+<p>用以下指令重新启动一个终止了的容器。</p>
+<pre><code>docker start [容器id]
+</code></pre>
+<p>以下指令停止一个容器再重新启动。</p>
+<pre><code>docker restart [容器id]
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>查看容器</h2>
+<pre><code>docker ps [-a]
+</code></pre>
+<ul>
+<li>-a: 查看所有容器，包括已经终止的。</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>删除</h2>
+<pre><code>docker rm
+</code></pre>
+<p>PS. 容器必须已经终止，否则需要用-f强制终止后删除。</p>
+
+	    </section>
+	    <section>
+	      <h2>关联到容器</h2>
+<pre><code>docker attach
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>获得镜像</h2>
+<pre><code>docker pull [仓库]:[tag]
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>列出镜像</h2>
+<pre><code>docker images
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>创建镜像</h2>
+<p>可以从现有镜像，启动为一个容器进行修改，最后再提交。</p>
+<pre><code>docker commit [容器ID] [仓库]:[tag]
+</code></pre>
+
+	    </section>
+	    <section>
+	      
+<p>也可以准备一个dockerfile，自动的从现有镜像修改提交。</p>
+<pre><code>docker build
+</code></pre>
+
+	    </section>
+	    <section>
+	      
+<p>也可以从本地文件导入。</p>
+<pre><code>cat files.tar.gz | docker import - [仓库]:[tag]
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>保存和载入</h2>
+<pre><code>docker save -o filename.tar [仓库]:[tag]
+
+docker load --input filename.tar
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>删除镜像</h2>
+<pre><code>docker rmi [仓库]:[tag]
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>上传镜像</h2>
+<pre><code>docker push
+</code></pre>
+
+	    </section>
+	    <section>
+	      <h2>修改镜像标签</h2>
+<pre><code>docker tag
+</code></pre>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>优劣</h1>
+<p>重要的不是docker自身有什么优劣，而是和虚拟化相比有什么优劣。</p>
+
+	    </section>
+	    <section>
+	      <h2>优势</h2>
+<ul>
+<li>高效的执行效率</li>
+<li>灵活的主机内调度（其实就是隔离不完备）</li>
+<li>差量传输更新（只需要更新依赖链上没有下载的部分）</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>劣势</h2>
+<ul>
+<li>没有成熟的管理工具</li>
+<li>案例不够多</li>
+<li>没有分布式存储系统</li>
+<li>更弱的隔离</li>
+</ul>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>场景</h1>
+
+	    </section>
+	    <section>
+	      <h2>方案发布</h2>
+<ul>
+<li>大型系统复杂的依赖</li>
+<li>docker发布一键安装</li>
+<li>差量传输更新，方便升级</li>
+<li>易于部署集群</li>
+<li>易于最大利用集群资源</li>
+<li>由于所有应用都是为同一个使用者服务，因此不存在单个应用“压死”其他应用的问题</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>PaaS</h2>
+<p>用于做paas的通用中间层，解决调试和标准的问题。</p>
+<ul>
+<li>在本地用docker调试和打包，远程可以在PaaS云上执行</li>
+<li>由于环境标准化，用户不再担心被“锁定”在一家PaaS上</li>
+</ul>
+
+	    </section>
+	    <section>
+	      
+<p>缺点:</p>
+<ul>
+<li>由于缺乏隔离，因此在单台机器上的应用会影响到同机应用，为了解决性能问题，引发频繁迁移</li>
+<li>同样由于缺乏隔离，因此无法限定最大使用量，只能限定请求数量</li>
+</ul>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>展望</h1>
+<ul>
+<li>docker并不完美，目前还缺少很多东西</li>
+<li>一般不建议在企业环境中直接使用docker，而是将其作为工具的底层使用</li>
+<li>即使目前并不使用，你也应当关注docker。因为将来他很可能改变和你有关的技术生态</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>演进</h2>
+<ul>
+<li>增加分布式文件系统支持</li>
+<li>增加灵活的网络支持(SDN)</li>
+<li>官方的管理工具</li>
+</ul>
+
+	    </section>
+	    <section>
+	      <h2>合作</h2>
+<ul>
+<li>基于docker的云平台系统</li>
+<li>基于docker的发行版</li>
+<li>基于docker的系统</li>
+</ul>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>引用</h1>
+<ul>
+<li><a href="http://dockerpool.com/static/books/docker_practice/index.html">Docker —— 从入门到实践</a></li>
+<li><a href="http://coolshell.cn/articles/17049.html">Docker基础技术：Linux CGroup</a></li>
+<li><a href="http://coolshell.cn/articles/17010.html">Docker基础技术：Linux Namespace（上）</a></li>
+<li><a href="http://coolshell.cn/articles/17029.html">Docker基础技术：Linux Namespace（下）</a></li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>Q&amp;A</h1>
+
+	</section>
+      </div>
+    </div>
+    <script src="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/js/head.min.js"></script>
+    <script src="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/js/reveal.js"></script>
+    <script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+
+    theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+    transition: Reveal.getQueryHash().transition || 'default', // none/fade/slide/convex/concave/zoom
+
+    // Parallax scrolling
+    // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+    // parallaxBackgroundSize: '2100px 900px',
+
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+    ]
+});
+    </script>
+  </body>
+</html>
