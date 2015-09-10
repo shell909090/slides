@@ -23,15 +23,16 @@
 
 * 本地可以将任意函数放到远程执行。
 * 支持远程import服务端上的库。
-  * 无缝支持py/pyc
-  * 只有py的情况下不需要在远程写文件，只有进程，不触发任何警报
-  * so需要保证本地文件在远程可以导入（架构和依赖OK）
+  * 无缝支持py/pyc。
+  * 只有py的情况下不需要在远程写文件，只有进程，不触发任何警报。
+  * so需要保证本地文件在远程可以导入（架构和依赖OK）。
 * 支持远程打开本地文件，本地stdout/stderr。远程logging打印回本地。
 * 支持远程回调本地函数。
 
 # 怎么做的
 
-1. ssh host python -c '...'，在远程执行一个引导代码，获得stdin/stdout。
+1. ssh host python -c '...'，在远程执行一个引导代码。
+   获得stdin/stdout。
 2. 将核心脚本发送到远程执行，在importer上挂钩子，在stdout上挂钩子。
 3. 在本地和远程交互，发送指令要求执行。
 
@@ -45,32 +46,47 @@
   * paramiko。
 * 支持自定义通讯协议。
   * raw data。marshal + zlib。size leaded frame。
-  * base64 coded。marshal + zlib + base64，支持穿越一些比较特殊的过滤设备。
+  * base64 coded。marshal + zlib + base64。
+    支持穿越一些比较特殊的过滤设备。
 
-实践中使用base64 coded模式，加上特殊的跳板机启动方案，在七牛的集群上执行任意代码。
-主要用来检查远程的漏洞修补情况。
+---
+
+实践中使用base64 coded模式，加上特殊的跳板机启动方案。
+
+在七牛的集群上执行任意代码。主要用来检查远程的漏洞修补情况。
 
 # 还有什么
 
 发挥你的想象力。
+
 原则上，可以用pexpect启动一个ssh来获得远程管道。
+
 连接堡垒机，模拟输入，登录到目标机器。
+
 再模拟手工执行python的过程，将stdin/stdout转交给rir。
+
 一切就像真人一样。
 
+---
+
 在远程执行任意代码，基本不会触发关键字。
+
 如果不想被解出来，我们还有。。。
+
 diffie-hellman key exchange algorithm + aes-256-cfb embed.
+
 of cause, you will got fired.
+
 but they have no evidence about what you did...
 
 # rir可以做到什么
 
-1. 在不同构的机器上执行运维脚本。（脚本需要是python，且在多个机器上都兼容）
+1. 在不同构的机器上执行运维脚本。
+   （脚本需要是python，且在多个机器上都兼容）
 2. 免去部署过程，测试服务端/客户端s的执行。
 3. \*\*和\*\*\*也是很好用的，你懂。
 
-# 根本上，RIR是一个远程执行框架
+# 根本上RIR是一个远程执行框架
 
 你可以拿去自high
 
@@ -102,11 +118,14 @@ but they have no evidence about what you did...
 # 所以呢？sync是做什么的？
 
 例如你有20台机器，家里有几台，自己有几台，帮朋友管几台。
+
 每个系统都不一样，配置各自不一样。你打算如何管理配置？
 
 sync可以将远程配置和属性批量拉到本地，再提交到git里。
 
-支持多人对同样的机器组进行协作更新。merge配置，pull，push。。。你们懂。
+支持多人对同样的机器组进行协作更新。merge配置，pull，push。。。
+
+你们懂。
 
 反正push到机器上的时候不要一起来就行。
 

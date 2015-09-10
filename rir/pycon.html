@@ -1,0 +1,259 @@
+<!doctype html>  
+<html lang="en">
+  <head>
+    <title>pycon</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/css/reveal.css">
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/css/theme/default.css" id="theme">
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/css/zenburn.css">
+    <!-- Include the appropriate print stylesheet -->
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+	<section>
+	  <h1>run it remote</h1>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>做什么用的</h1>
+<p>用将代码放到远程执行。大概就是这样子：</p>
+<pre><code>scp script.py host:
+ssh host python script.py
+</code></pre>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>为什么要用rir</h1>
+<p>脚本的远程执行往往伴随几个困难。</p>
+<ol>
+<li>目标机器在很深的内网，需要scp后再scp。</li>
+<li>更新脚本内容后需要重新copy。</li>
+<li>一次启动多个节点形成集群，更新代码后需要全部关闭再全部启动。</li>
+<li>没有api接口。</li>
+<li>一样工作，重复劳动。</li>
+</ol>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>rir live show</h1>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>rir做了什么</h1>
+<ul>
+<li>本地可以将任意函数放到远程执行。</li>
+<li>支持远程import服务端上的库。
+<ul>
+<li>无缝支持py/pyc。</li>
+<li>只有py的情况下不需要在远程写文件，只有进程，不触发任何警报。</li>
+<li>so需要保证本地文件在远程可以导入（架构和依赖OK）。</li>
+</ul></li>
+<li>支持远程打开本地文件，本地stdout/stderr。远程logging打印回本地。</li>
+<li>支持远程回调本地函数。</li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>怎么做的</h1>
+<ol>
+<li>ssh host python -c '...'，在远程执行一个引导代码。
+获得stdin/stdout。</li>
+<li>将核心脚本发送到远程执行，在importer上挂钩子，在stdout上挂钩子。</li>
+<li>在本地和远程交互，发送指令要求执行。</li>
+</ol>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>更多细节</h1>
+<p>全是ssh家族的。</p>
+<ul>
+<li>支持自定义远程启动方法。
+<ul>
+<li>ssh子进程。</li>
+<li>远程可以sudo(这是自然)来获得root权限。</li>
+<li>paramiko。</li>
+</ul></li>
+<li>支持自定义通讯协议。
+<ul>
+<li>raw data。marshal + zlib。size leaded frame。</li>
+<li>base64 coded。marshal + zlib + base64。
+支持穿越一些比较特殊的过滤设备。</li>
+</ul></li>
+</ul>
+
+	    </section>
+	    <section>
+	      
+<p>实践中使用base64 coded模式，加上特殊的跳板机启动方案。</p>
+<p>在七牛的集群上执行任意代码。主要用来检查远程的漏洞修补情况。</p>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	    <section>
+	      <h1>还有什么</h1>
+<p>发挥你的想象力。</p>
+<p>原则上，可以用pexpect启动一个ssh来获得远程管道。</p>
+<p>连接堡垒机，模拟输入，登录到目标机器。</p>
+<p>再模拟手工执行python的过程，将stdin/stdout转交给rir。</p>
+<p>一切就像真人一样。</p>
+
+	    </section>
+	    <section>
+	      
+<p>在远程执行任意代码，基本不会触发关键字。</p>
+<p>如果不想被解出来，我们还有。。。</p>
+<p>diffie-hellman key exchange algorithm + aes-256-cfb embed.</p>
+<p>of cause, you will got fired.</p>
+<p>but they have no evidence about what you did...</p>
+
+	    </section>
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>rir可以做到什么</h1>
+<ol>
+<li>在不同构的机器上执行运维脚本。
+（脚本需要是python，且在多个机器上都兼容）</li>
+<li>免去部署过程，测试服务端/客户端s的执行。</li>
+<li>**和***也是很好用的，你懂。</li>
+</ol>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>根本上RIR是一个远程执行框架</h1>
+<p>你可以拿去自high</p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>效率呢？</h1>
+<p>不算太高。在国内的用例里，每个的执行时间都到了秒级。</p>
+<p>将一个web项目发到远程执行甚至用了2s。</p>
+<p>所以，如果有大量的设备（例如上千），还是老老实实用salt比较实在。</p>
+<p>但是对一次性应用来说，几秒的时间完全不痛不痒。</p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>内附脚本</h1>
+<ul>
+<li>hwinfo: 收集远程机器的各种数据。</li>
+<li>sync: 同步远程文件。</li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>sync?</h1>
+<p>没错。sync又是一个非常复杂的小系统。</p>
+<ul>
+<li>使用yaml作为配置和数据存储。</li>
+<li>定义远程的一组特定目录。</li>
+<li>从远程同步文件内容和属性/属主到本地。</li>
+<li>只同步需要更新的，相同内容不需要通过网络。</li>
+<li>从本地同步文件内容和属性/属主到远程。</li>
+</ul>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>所以呢？sync是做什么的？</h1>
+<p>例如你有20台机器，家里有几台，自己有几台，帮朋友管几台。</p>
+<p>每个系统都不一样，配置各自不一样。你打算如何管理配置？</p>
+<p>sync可以将远程配置和属性批量拉到本地，再提交到git里。</p>
+<p>支持多人对同样的机器组进行协作更新。merge配置，pull，push。。。</p>
+<p>你们懂。</p>
+<p>反正push到机器上的时候不要一起来就行。</p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>sync live show</h1>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>效率呢？</h1>
+<p>7台内网机器+2台国内物理机。</p>
+<p>1.5s。</p>
+<p>其实一台机器同步一些配置文件下来并不需要多久。
+只要你的机器能并发执行。。。</p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>License</h1>
+<p>Run It Remote: BSD-3-clause
+This slide: cc-by-sa3.0</p>
+<p>Powered by <a href="https://github.com/visit1985/mdp">MDP</a>
+GPLv3</p>
+
+	</section>
+      </div>
+      <div class="slides">
+	<section>
+	  <h1>Q&amp;A</h1>
+
+	</section>
+      </div>
+    </div>
+    <script src="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/js/head.min.js"></script>
+    <script src="http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/js/reveal.js"></script>
+    <script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+
+    theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+    transition: Reveal.getQueryHash().transition || 'default', // none/fade/slide/convex/concave/zoom
+
+    // Parallax scrolling
+    // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+    // parallaxBackgroundSize: '2100px 900px',
+
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+	{ src: 'http://xuzhixiang.u.qiniudn.com/reveal/2.6.2/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+    ]
+});
+    </script>
+  </body>
+</html>
