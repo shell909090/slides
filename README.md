@@ -23,6 +23,7 @@
   * [hwinfo录像](rir/hwinfo.rec)
   * [noapt录像](rir/noapt.rec)
   * [sync录像](rir/sync.rec)
+* [linux system security and tunning - basic](md/linuxsec_basic.md) 播放工具[MDP](https://github.com/visit1985/mdp)。
 
 # LICENSE
 
