@@ -24,6 +24,7 @@
   * [noapt录像](rir/noapt.rec)
   * [sync录像](rir/sync.rec)
 * [linux system security and tunning - basic](md/linuxsec_basic.md) 播放工具[MDP](https://github.com/visit1985/mdp)。
+* [程序猿训练师养成计划1.0](ipynb/PyCon2016.slides.html) [源文件](ipynb/PyCon2016.ipynb) 2016-09-10在PyCon2016 Shanghai的演讲
 
 # LICENSE
 
