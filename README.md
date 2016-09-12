@@ -7,10 +7,10 @@
 * [linux的文件系统对比](https://raw.githubusercontent.com/shell909090/slides/master/pdf/linux_fs.pdf) 2011-08-21在SHLUG的分享
 * [实战Linux网络部署](https://raw.githubusercontent.com/shell909090/slides/master/pdf/linux_on_net.pdf) 2011-11-06在东华大学SHLUG的2011年年度技术分享会的演讲
 * [元编程在redis orm中的应用](http://shell909090.github.com/slides/md/meta.html) ([source](https://github.com/shell909090/slides/blob/master/md/meta.md)) 2012-10-20在PyCon2012的演讲
-* [why python](http://htmlpreview.github.io/?https://raw.githubusercontent.com/shell909090/slides/master/md/why_python.html) ([source](https://github.com/shell909090/slides/blob/master/md/why_python.md)) 2013-04-17在GDG Meetup – Python Salon上的分享
-* [python startup](http://htmlpreview.github.io/?https://raw.githubusercontent.com/shell909090/slides/master/md/python-startup.html) ([source](https://github.com/shell909090/slides/blob/master/md/python-startup.md)) 2013-03-23在上海浦东软件园，开源力量公开课上的分享
-* [schemepy](http://htmlpreview.github.io/?https://raw.githubusercontent.com/shell909090/slides/master/md/schemepy.html) ([source](https://github.com/shell909090/slides/blob/master/md/schemepy.md)) 2013-05-25在shlug聚会上的分享
-* [大陆地区网络状况简介](http://htmlpreview.github.io/?https://raw.githubusercontent.com/shell909090/slides/master/chinanet/chinanet.html) ([source](chinanet/chinanet.md)) 2013-08-03在COSCUP上的演讲
+* [why python](http://shell909090.github.com/slides/md/why_python.html) ([source](https://github.com/shell909090/slides/blob/master/md/why_python.md)) 2013-04-17在GDG Meetup – Python Salon上的分享
+* [python startup](http://shell909090.github.com/slides/md/python-startup.html) ([source](https://github.com/shell909090/slides/blob/master/md/python-startup.md)) 2013-03-23在上海浦东软件园，开源力量公开课上的分享
+* [schemepy](http://shell909090.github.com/slides/md/schemepy.html) ([source](https://github.com/shell909090/slides/blob/master/md/schemepy.md)) 2013-05-25在shlug聚会上的分享
+* [大陆地区网络状况简介](http://shell909090.github.com/slides/chinanet/chinanet.html) ([source](https://github.com/shell909090/slides/blob/master/chinanet/chinanet.md)) 2013-08-03在COSCUP上的演讲
 * [深入介绍七牛云存储](http://htmlpreview.github.io/?https://raw.githubusercontent.com/shell909090/slides/master/md/qiniu_deepin.html) ([source](https://github.com/shell909090/slides/blob/master/md/qiniu_deepin.md)) 2013-09在linux deepin上的演讲
 * [密码强度分析](http://htmlpreview.github.io/?https://raw.githubusercontent.com/shell909090/slides/master/md/passwd.html) ([source](https://github.com/shell909090/slides/blob/master/md/passwd.md)) 2014-03在SHLUG的演讲
 * [docker不是虚拟机](http://htmlpreview.github.io/?https://raw.githubusercontent.com/shell909090/slides/master/md/docker.html) ([source](https://github.com/shell909090/slides/blob/master/md/docker.md)) 2014-06-29在云计算和大数据，2014-07-27在SHLUG的演讲
