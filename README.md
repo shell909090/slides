@@ -16,13 +16,13 @@
 * [docker不是虚拟机](http://shell909090.github.com/slides/md/docker.html) ([source](https://github.com/shell909090/slides/blob/master/md/docker.md)) 2014-06-29在云计算和大数据，2014-07-27在SHLUG的演讲
 * [开源许可协议漫说](http://shell909090.github.com/slides/md/lic.html) ([source](https://github.com/shell909090/slides/blob/master/md/lic.md)) ([tip](https://github.com/shell909090/slides/blob/master/md/lic_tip.md)) 2014-07-25在华东师范大学2014年暑期学校培训的演讲
 * [简说apt包管理系统](http://shell909090.github.com/slides/md/apt.html) ([source](https://github.com/shell909090/slides/blob/master/md/apt.md)) 2014-08-28在七牛的培训
-* [上下文切换技术简介](http://shell909090.github.com/slides/context/context_slide.html) ([source](https://github.com/shell909090/slides/blob/master/content/context_slide.md)) ([tip](https://github.com/shell909090/slides/blob/master/context/context.md)) ([test](https://github.com/shell909090/slides/blob/master/context/context_test.md)) 2014-11-14在七牛的培训，2014-11-15在PyCon2014上的演讲
+* [上下文切换技术简介](http://shell909090.github.com/slides/context/context_slide.html) ([source](https://github.com/shell909090/slides/blob/master/context/context_slide.md)) ([tip](https://github.com/shell909090/slides/blob/master/context/context.md)) ([test](https://github.com/shell909090/slides/blob/master/context/context_test.md)) 2014-11-14在七牛的培训，2014-11-15在PyCon2014上的演讲
 * [docker的功能，结构，用法](http://shell909090.github.com/slides/md/docker1.html) ([source](https://github.com/shell909090/slides/blob/master/md/docker1.md)) 2015-07-25在mpd大会上的演讲
 * [run it remote  一种远程执行代码的方法](http://shell909090.github.com/slides/rir/pycon.html) 2015-09-12在PyCon2015 Shanghai的演讲
   * [cli版本](https://github.com/shell909090/slides/blob/master/rir/cli.md) 播放工具[MDP](https://github.com/visit1985/mdp)。
-  * [hwinfo录像](https://github.com/shell909090/slides/blob/master/rir/hwinfo.rec)
-  * [noapt录像](https://github.com/shell909090/slides/blob/master/rir/noapt.rec)
-  * [sync录像](https://github.com/shell909090/slides/blob/master/rir/sync.rec)
+  * [hwinfo录像](http://shell909090.github.com/slides/rir/hwinfo.rec)
+  * [noapt录像](http://shell909090.github.com/slides/rir/noapt.rec)
+  * [sync录像](http://shell909090.github.com/slides/rir/sync.rec)
 * [linux system security and tunning - basic](https://github.com/shell909090/slides/blob/master/md/linuxsec_basic.md) 播放工具[MDP](https://github.com/visit1985/mdp)。
 * [程序猿训练师养成计划1.0](http://shell909090.github.com/slides/ipynb/PyCon2016.slides.html) [源文件](https://github.com/shell909090/slides/blob/master/ipynb/PyCon2016.ipynb) 2016-09-10在PyCon2016 Shanghai的演讲
 
