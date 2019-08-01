@@ -1,0 +1,140 @@
+<h1>Abstract</h1>
+
+<ol>
+<li>Quick introduce how TCP handshake works, how listen and accept works.</li>
+<li>Introduce several ways and tools to read kernel.</li>
+<li>Demonstrate how to do it.</li>
+</ol>
+
+<h1>Keywords</h1>
+
+<ul>
+<li>linux</li>
+<li>tcp</li>
+<li>listen</li>
+<li>accept</li>
+<li>synflood</li>
+</ul>
+
+<h1>Copyright &amp; License</h1>
+
+<p>Copyright (C) 2019  Shell.Xu <a href="&#109;&#97;&#105;&#x6C;&#x74;&#x6F;:&#x73;&#x68;&#101;&#108;&#x6C;&#x39;&#48;&#57;&#48;&#57;&#x30;&#64;&#103;&#109;&#97;&#x69;&#x6C;&#46;&#x63;&#111;&#x6D;">&#x73;&#x68;&#101;&#108;&#x6C;&#x39;&#48;&#57;&#48;&#57;&#x30;&#64;&#103;&#109;&#97;&#x69;&#x6C;&#46;&#x63;&#111;&#x6D;</a></p>
+
+<p>Text is available under the <a href="https://creativecommons.org/licenses/by-sa/4.0/legalcode">Creative Commons Attribution-ShareAlike License</a></p>
+
+<h1>摘要</h1>
+
+<ol>
+<li>简单介绍tcp握手原理，理解listen和accept的机制。</li>
+<li>介绍代码阅读的几种手段和工具。</li>
+<li>简单演示如何阅读linux源码。</li>
+</ol>
+
+<h1>TCP握手</h1>
+
+<p>TCP握手可以简单分为三步[13]，但实际上加上前后过程总共有六步。</p>
+
+<p>假定发起方为A，接收方为B。A的连接socket称为Ac。B的listen socket称为Bl，accept出来的socket成为Ba。</p>
+
+<ol>
+<li>B首先建立Bl，调用listen，设定队列大小。 (前置步骤例如建立socket等省略)</li>
+<li>A对Ac调用connect，内核发送SYN报文。</li>
+<li>B内核收到SYN报文，找到Bl。Bl在内核经过一定处理后决定是否返回SYN&amp;ACK报文。</li>
+<li>A收到SYN&amp;ACK报文，找到Ac。Ac在内核经过一定处理后返回ACK报文，并且A连接建立就绪，可以收发数据。</li>
+<li>B收到ACK报文，找到或建立Ba。Ba连接建立就绪，进入accept队列。</li>
+<li>B对Bl调用accept，获得Ba。</li>
+</ol>
+
+<p>不同系统实现的差别有：</p>
+
+<ol>
+<li>第3步中，内核如何决定是否返回SYN&amp;ACK报文。其中主要考虑SYN flood[3][4]的防御。</li>
+<li>Ba在第3步建立还是第5步建立。</li>
+<li>Ba在第3步到第5步的状态(我们称为半握手状态)，是否放入accept队列，还是保持一个单独队列[1]。</li>
+<li>如何加速上述流程。</li>
+</ol>
+
+<h1>manual</h1>
+
+<p>根据文献[10]</p>
+
+<pre><code>The behavior of the backlog argument on TCP sockets changed with Linux 2.2.  Now it specifies the queue length for completely established sockets waiting to be accepted, instead of the number  of  incomplete  connection  re‐
+quests.   The  maximum  length  of  the  queue for incomplete sockets can be set using /proc/sys/net/ipv4/tcp_max_syn_backlog.  When syncookies are enabled there is no logical maximum length and this setting is ignored.  See
+tcp(7) for more information.
+</code></pre>
+
+<h1>utils</h1>
+
+<ol>
+<li><a href="https://elixir.bootlin.com/linux/latest/source">lxr</a></li>
+<li><a href="https://github.com/torvalds/linux">github repository</a></li>
+<li><a href="https://github.com/torvalds/linux/releases">github release</a></li>
+</ol>
+
+<h1>阅读重点</h1>
+
+<ol>
+<li>struct sock</li>
+<li>struct socket</li>
+<li>struct inet_connection_sock</li>
+<li>struct inet_sock</li>
+</ol>
+
+<p>sock和socket互相指向。inet_connection_sock包含inet_sock，inet_sock包含sock。</p>
+
+<ol>
+<li>EXPORT_SYMBOL(inet_listen)</li>
+<li>EXPORT_SYMBOL(inet_accept)</li>
+<li>tcp_v4_rcv
+<ol>
+<li>__inet_lookup_skb
+<ol>
+<li>__inet_lookup</li>
+<li>__inet_lookup_established 开链法(Separate chaining with linked lists)[8][9]</li>
+<li>__inet_lookup_listener 注意reuseport[11][12]和INADDR_ANY的处理</li>
+</ol></li>
+<li>tcp_check_req
+<ol>
+<li>inet_csk_complete_hashdance</li>
+<li>inet_csk_reqsk_queue_add</li>
+</ol></li>
+<li>tcp_v4_do_rcv
+<ol>
+<li>tcp_rcv_state_process 重点process</li>
+<li>tcp_v4_conn_request</li>
+<li>tcp_conn_request</li>
+<li>inet_csk_reqsk_queue_hash_add req加hash表，不是sk</li>
+<li>reqsk_queue_hash_req</li>
+<li>inet_ehash_insert</li>
+</ol></li>
+</ol></li>
+</ol>
+
+<h1>结论</h1>
+
+<ol>
+<li>当没有synflood[3][4]时，正常返回。synflood时(超过sysctl_max_syn_backlog[2]的3/4)，未开启syncookie[4][5]则丢弃。</li>
+<li>Ba在第3步建立，而后进入hashinfo结构。第5步通过hashinfo找到Ba，检验ack通过后进入accept_queue。</li>
+<li>Ba在半握手状态直接装入hashinfo。后续使用定时器重发SYN&amp;ACK，直到超过tcp_synack_retries[2]规定的极限。</li>
+<li>fastopen[6][7]有助于这个过程。</li>
+</ol>
+
+<h1>references</h1>
+
+<ol>
+<li><a href="http://veithen.io/2014/01/01/how-tcp-backlog-works-in-linux.html">How TCP backlog works in Linux</a> [14]</li>
+<li><a href="https://github.com/torvalds/linux/blob/master/Documentation/networking/ip-sysctl.txt">ip-sysctl.txt</a></li>
+<li><a href="https://en.wikipedia.org/wiki/SYN_flood">SYN flood</a></li>
+<li><a href="https://github.blog/2016-07-12-syn-flood-mitigation-with-synsanity/">SYN Flood Mitigation with synsanity</a> [15]</li>
+<li><a href="https://en.wikipedia.org/wiki/SYN_cookies">SYN cookies</a></li>
+<li><a href="https://en.wikipedia.org/wiki/TCP_Fast_Open">TCP Fast Open</a></li>
+<li><a href="https://github.com/derikclive/TCP-Fast-Open-Experimentation">TCP-Fast-Open-Experimentation</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Hash_table">Hash table</a></li>
+<li><a href="https://gist.github.com/phsym/4605704">An hashtable implementation in C</a></li>
+<li><a href="http://man7.org/linux/man-pages/man2/listen.2.html">listen</a></li>
+<li><a href="http://man7.org/linux/man-pages/man7/socket.7.html">socket</a></li>
+<li><a href="https://lwn.net/Articles/542629/">The SO_REUSEPORT socket option</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Transmission_Control_Protocol#Connection_establishment">Transmission Control Protocol#Connection establishment</a></li>
+<li><a href="https://github.com/freebsd/freebsd/blob/master/sys/netinet/tcp_input.c#L544">github bsd kernel</a></li>
+<li><a href="https://github.com/torvalds/linux/blob/master/Documentation/networking/tproxy.txt">tproxy</a></li>
+</ol>

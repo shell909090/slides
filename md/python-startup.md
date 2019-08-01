@@ -306,6 +306,7 @@ ORM有用么？
 
 * jinja2
 
+{% raw %}
 	{% extends "layout.html" %}
 	{% block body %}
 	  <ul>
@@ -318,5 +319,6 @@ ORM有用么？
 	from jinja2 import Template
 	template = Template(...)
 	template.render(name='John Doe')
+{% endraw %}
 
 ## session ##

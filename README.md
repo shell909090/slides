@@ -1,7 +1,5 @@
 # Directory
 
-* [GFW的原理和绕过](https://raw.githubusercontent.com/shell909090/slides/master/pdf/GFW.pdf)
-* [一种翻墙方法](https://raw.githubusercontent.com/shell909090/slides/master/pdf/one_way_cross_gfw.pdf)
 * [elisp的简单介绍](https://raw.githubusercontent.com/shell909090/slides/master/pdf/elisp.pdf) 2010-12在SHLUG的分享
 * [Python源码解析读书笔记](https://raw.githubusercontent.com/shell909090/slides/master/pdf/python_source.pdf) ([odp](https://raw.githubusercontent.com/shell909090/slides/master/pdf/python_source.odp)) 2011-03-27在五分钟的分享
 * [linux的文件系统对比](https://raw.githubusercontent.com/shell909090/slides/master/pdf/linux_fs.pdf) 2011-08-21在SHLUG的分享
@@ -26,6 +24,7 @@
 * [linux system security and tunning - basic](https://github.com/shell909090/slides/blob/master/md/linuxsec_basic.md) 播放工具[MDP](https://github.com/visit1985/mdp)。
 * [程序猿训练师养成计划1.0](http://shell909090.github.com/slides/ipynb/PyCon2016.slides.html) [源文件](https://github.com/shell909090/slides/blob/master/ipynb/PyCon2016.ipynb) 2016-09-10在PyCon2016 Shanghai的演讲
 * [step into cryptography](https://github.com/shell909090/slides/raw/master/pdf/step%20into%20cryptography.pdf) ([odp](https://github.com/shell909090/slides/raw/master/pdf/step%20into%20cryptography.odp)) 2018-05-29在饿了么的演讲
+* [在github上阅读linux源码](https://shell909090.github.com/slides/md/kernel-read.html) ([source](https://github.com/shell909090/slides/raw/master/md/kernel-read.md)) 2019-08-01在SHLUG月会上的演讲
 
 # LICENSE
 
