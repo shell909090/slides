@@ -22,9 +22,10 @@
   * [noapt录像](http://shell909090.github.com/slides/rir/noapt.rec)
   * [sync录像](http://shell909090.github.com/slides/rir/sync.rec)
 * [linux system security and tunning - basic](https://github.com/shell909090/slides/blob/master/md/linuxsec_basic.md) 播放工具[MDP](https://github.com/visit1985/mdp)。
-* [程序猿训练师养成计划1.0](http://shell909090.github.com/slides/ipynb/PyCon2016.slides.html) [源文件](https://github.com/shell909090/slides/blob/master/ipynb/PyCon2016.ipynb) 2016-09-10在PyCon2016 Shanghai的演讲
+* [程序猿训练师养成计划1.0](http://shell909090.github.com/slides/ipynb/pycon2016.slides.html) [源文件](https://github.com/shell909090/slides/blob/master/ipynb/pycon2016.ipynb) 2016-09-10在PyCon2016 Shanghai的演讲
 * [step into cryptography](https://github.com/shell909090/slides/raw/master/pdf/step%20into%20cryptography.pdf) ([odp](https://github.com/shell909090/slides/raw/master/pdf/step%20into%20cryptography.odp)) 2018-05-29在饿了么的演讲
 * [在github上阅读linux源码](https://shell909090.github.com/slides/md/kernel-read.html) ([source](https://github.com/shell909090/slides/raw/master/md/kernel-read.md)) 2019-08-01在SHLUG月会上的演讲
+* [home bot](https://shell909090.github.com/slides/ipynb/pycon2019.slides.html) [源文件](https://github.com/shell909090/slides/blob/master/ipynb/pycon2019.ipynb) 2019-10-19在PyCon2019 HangZhou的演讲
 
 # LICENSE
 
