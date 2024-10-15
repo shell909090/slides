@@ -26,6 +26,7 @@
 * [step into cryptography](https://github.com/shell909090/slides/raw/master/pdf/step%20into%20cryptography.pdf) ([odp](https://github.com/shell909090/slides/raw/master/pdf/step%20into%20cryptography.odp)) 2018-05-29在饿了么的演讲
 * [在github上阅读linux源码](https://shell909090.github.com/slides/md/kernel-read.html) ([source](https://github.com/shell909090/slides/raw/master/md/kernel-read.md)) 2019-08-01在SHLUG月会上的演讲
 * [home bot](https://shell909090.github.com/slides/ipynb/pycon2019.slides.html) [源文件](https://github.com/shell909090/slides/blob/master/ipynb/pycon2019.ipynb) 2019-10-19在PyCon2019 HangZhou的演讲
+* [pandas计算人口和劳动力数据](https://shell909090.github.io/slides/ipynb/pycon2024.slides.html) [源文件](https://github.com/shell909090/slides/blob/master/ipynb/pycon2024.ipynb)
 
 # LICENSE
 
