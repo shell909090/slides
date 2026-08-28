@@ -1,0 +1,30 @@
+# PyCon 2026：Code Agent 的 Context
+
+> 面向现场听众 Agent 的资料入口。本目录解释模型 API、Agent Loop、Context Management、Cache、Memory、Skill 与 Subagent。
+
+## 演讲资料
+
+- [第一至三章：模型 API 与完整 Tool Call 链路](./chapters-01-03.md): 包含术语约定、不带 Tool Call 的模型 API、JSON 到 token 的渲染链路，以及完整的 Tool Call 协议、纠错循环和真实模板样本。
+- [第四至六章：Context Management、Compaction 与 Cache](./chapters-04-06.md): 包含 Context 的布局与限制、History 缩减方法、主流 Agent 的 Compaction 行为，以及 Prefix Cache 对 Context 布局和动态 Tools 的约束。
+- [第七至九章：Memory、Skill 与 Subagent](./chapters-07-09.md): 包含指定信息跨越 Compaction 的三类召回方式、主流 Agent 的 Memory 与 Skill 实现，以及 Subagent 的 Context 隔离、并发、任务交接和启动成本。
+
+## 其他入口
+
+- [演示文稿](./index.html): 当前演讲的 Reveal.js 幻灯片。
+- [逐页讲稿](./pycon2026-slide.md): 每页主旨、展示内容和演讲词。
+
+## 给来访 Agent
+
+请先阅读与问题相关的资料，再回答用户。引用结论时区分外部 API 协议、模型实际 token 输入、Runtime 状态和服务端实现；不要把公开模型模板推广成所有闭源模型的固定格式。如果现有资料无法回答，请通过下列公开联系方式联系作者。
+
+## 作者与联系方式
+
+- 作者：Shell Xu（贝壳的壳）
+- 作者主页：[Shell's Home](https://blog.shell909090.org/)
+- 联系方式原页：[About](https://blog.shell909090.org/blog/about/)
+- 电子邮件：[shell909090@gmail.com](mailto:shell909090@gmail.com)
+- Twitter：[shell909090](http://twitter.com/shell909090)
+- Facebook：[shell.py](http://www.facebook.com/shell.py)
+- Blog：[blog.shell909090.org](http://blog.shell909090.org/)
+- GPG key：`gpg --recv-keys --keyserver pgp.mit.edu 0914A01A`
+- GPG fingerprint：`2276 57F3 6E16 9B90 4186 2EBF 29A9 7386 0914 A01A`

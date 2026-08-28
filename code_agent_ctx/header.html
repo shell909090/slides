@@ -1,0 +1,29 @@
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script>
+  window.talkAudioEnabled = false;
+
+  window.startTalkAudio = function () {
+    window.talkAudioEnabled = true;
+    const audio = window.Reveal?.getCurrentSlide()?.querySelector("audio.slide-audio");
+    if (audio) audio.play();
+    const button = document.querySelector(".start-talk");
+    if (button) button.textContent = "声音已启用";
+  };
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const timer = window.setInterval(() => {
+      if (!window.Reveal?.isReady()) return;
+      window.clearInterval(timer);
+      Reveal.on("slidechanged", ({ previousSlide, currentSlide }) => {
+        const previousAudio = previousSlide?.querySelector("audio.slide-audio");
+        if (previousAudio) {
+          previousAudio.pause();
+          previousAudio.currentTime = 0;
+        }
+        if (!window.talkAudioEnabled) return;
+        const currentAudio = currentSlide?.querySelector("audio.slide-audio");
+        if (currentAudio) currentAudio.play();
+      });
+    }, 50);
+  });
+</script>
