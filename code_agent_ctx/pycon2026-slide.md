@@ -44,7 +44,7 @@ status: draft
 
 ### 演讲词（TTS）
 
-大家好。今天我们讨论 Code Agent 的 Context。整场分享只追一个问题：模型每一次被调用时，实际看到了什么？我们会从最普通的模型 API 出发，逐步加入 Agent Loop、Compaction、Cache、Memory、Skill 和 Subagent，最后看一个完整的 Agent Runtime 怎样构造并改变 Context。
+大家好。今天我们讨论 Code Agent 的 Context。整场分享主要讨论一个主题：模型每一次被调用时，实际看到了什么？我们会从最简单的模型 API 出发，逐步加入 Tools、Agent Loop、Compaction、Cache、Memory、Skill 和 Subagent，最后看一个完整的 Agent Runtime 怎样构造并改变 Context。
 
 <!-- slide:llms-intro -->
 ## 资料入口｜llms.txt
