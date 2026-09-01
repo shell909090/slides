@@ -50,10 +50,13 @@
 
 - `talk.qmd`
 - `audio/tts-manifest.json`
-- `audio/tts-state.json`
 - `scripts/__pycache__/`
 
 `make` 成功结束后会自动删除它们。
+
+### 构建缓存
+
+- `audio/tts-state.json`：记录每页 TTS 的配置与讲稿哈希，使后续构建只重新生成发生变化的 MP3。该文件需要保留在 Git 中，但不属于 GitHub Pages 的运行依赖。
 
 ## 构建过程
 
@@ -77,7 +80,7 @@ make QUARTO=/path/to/quarto
 4. 再次运行 `scripts/generate.py`，把音频路径、时长和 speaker notes 写入临时 QMD。
 5. Quarto 把 `talk.qmd` 渲染为 `index.html` 和 `talk_files/`。
 6. `prune-output` 删除 Quarto 附带、但页面未加载的 source map、备用模块、插件源码和字体。
-7. `clean-intermediate` 删除 QMD、TTS manifest/state 和 Python 缓存，只留下源文件与托管成品。
+7. `clean-intermediate` 删除 QMD、TTS manifest 和 Python 缓存，保留 `audio/tts-state.json` 供下次构建判断哪些音频需要更新。
 
 ## 编辑约定
 

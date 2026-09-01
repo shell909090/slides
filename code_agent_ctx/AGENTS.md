@@ -14,7 +14,8 @@
 - `talk.css`、`header.html`、`favicon.svg`：页面样式、行为和图标源文件。
 - `scripts/`：二维码、QMD 和 TTS 生成器。
 - `audio/*.mp3`、`assets/llms-qr.svg`、`index.html`、`talk_files/`：需要提交的托管成品。
-- `talk.qmd`、`audio/tts-manifest.json`、`audio/tts-state.json`、`scripts/__pycache__/`：构建中间文件，不应提交。
+- `audio/tts-state.json`：需要提交的 TTS 构建缓存，用于避免重复生成未变化的 MP3。
+- `talk.qmd`、`audio/tts-manifest.json`、`scripts/__pycache__/`：构建中间文件，不应提交。
 
 ## Editing
 
@@ -27,5 +28,5 @@
 ## Build
 
 - 编译过程、依赖和参数见 `README.md`；标准入口是 `make`。
-- 构建结束后确认中间文件已清理，最终 HTML、Reveal.js 依赖、二维码和全部音频仍然存在。
+- 构建结束后确认中间文件已清理，TTS state、最终 HTML、Reveal.js 依赖、二维码和全部音频仍然存在。
 - 使用浏览器检查时，结束后必须关闭 Playwright session、停止临时 HTTP 服务，并删除 `.playwright-cli/` 快照目录。

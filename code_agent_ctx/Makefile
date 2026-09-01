@@ -37,5 +37,5 @@ prune-output:
 	$(RM) talk_files/libs/revealjs/plugin/reveal-menu/plugin.yml
 
 clean-intermediate:
-	$(RM) talk.qmd audio/tts-manifest.json audio/tts-state.json
+	$(RM) talk.qmd audio/tts-manifest.json
 	find scripts -type d -name __pycache__ -prune -exec $(RM) -r {} +

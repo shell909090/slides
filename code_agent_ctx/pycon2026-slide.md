@@ -1945,8 +1945,37 @@ OpenCode Compact 不是在原 Context 上原地删短，而是先构造一次无
 
 OpenCode 的 Compaction 不是把原 Context 原地删短。Compact 前，普通 Context 包含稳定 Head 和完整事件。触发压缩后，Runtime 先发起一次独立摘要请求：专用 Prompt 加旧事件 transcript，并且不提供 Tools。摘要完成后，下一次普通调用重新构造 Head、Catalog 和 Tools，再接 marker、生成的 History Abstract，以及预算允许时保留的 raw tail。旧 History 没有被覆盖，变化的是模型下一次看到的 Context。
 
+<!-- slide:token-saving-tips -->
+## 40｜从原理推论几个节省 Token 的小技巧
+
+### 主旨
+
+减少每轮固定进入 Context 的内容，把一次性细节隔离在主 History 之外，并在明确的 Context epoch 边界集中重建；这些动作分别减少输入长度、后续 Cache 读取或重复 Prefill。
+
+### 展示内容（QMD）
+
+````qmd
+## 从原理推论几个节省 Token 的小技巧 {#token-saving-tips .token-tips-slide}
+
+<div class="slide-marker"><b>40</b><span>LESS CONTEXT · LESS RECOMPUTE</span></div>
+
+<div class="token-tip-grid">
+<div class="token-tip-card capability-tip"><header><b>01 · CAPABILITY</b><strong>删除无效 Tools 和 Skills</strong></header><p>从配置中移除当前 Agent 用不到的能力。</p><small>缩短固定 Head · 会话开始前完成</small></div>
+<div class="token-tip-card disclosure-tip"><header><b>02 · DISCLOSURE</b><strong>缩短 <code>AGENTS.md</code> / <code>CLAUDE.md</code></strong></header><p>常驻永久规则；详细正文按“触发条件 → 路径”读取。</p><small>稳定短索引 · 正文按需进入</small></div>
+<div class="token-tip-card compact-tip"><header><b>03 · EPOCH</b><strong>在阶段边界主动 <code>/compact</code></strong></header><p>工作告一段落、旧细节不再需要，或长时间 AFK 之前。</p><small>用短状态开启新 Context epoch</small></div>
+<div class="token-tip-card subagent-tip"><header><b>04 · ISOLATION</b><strong>一次性复杂工作交给 Subagent</strong></header><p>搜索、HTML、日志和失败重试留在 Worker，只返回结论。</p><small>保护主 History · 减少后续反复读取</small></div>
+<div class="token-tip-card model-tip"><header><b>05 · MODEL CACHE</b><strong>连续会话不要来回切便宜模型</strong></header><p>不同模型不能直接复用同一份 K/V；短暂切换可能重复 Prefill。</p><small>保持主线程模型与 Prefix 稳定</small></div>
+</div>
+
+<div class="slide-takeaway"><span>SHORT · STABLE · ISOLATED</span><strong>缩短稳定 Head，隔离一次性轨迹，把 Context 重建集中在阶段边界</strong></div>
+````
+
+### 演讲词（TTS）
+
+下面总结几个省钱小技巧：第一，在开始会话前，从 Agent 配置中删除不常用的 Tools 和 Skills，需要的会话里再打开。第二，缩短 AGENTS 点 M D 或 CLAUDE 点 M D。里面只保留每次都必须知道的永久规则，以及“什么情况下读取哪个路径”。不要用加载时自动展开全文的 import 冒充渐进式披露。第三，工作告一段落、已经不需要之前的操作细节时，可以主动 Compact；长时间离开之前也适合考虑。回来时即使旧 Cache 已经过期，下一轮只需要较短的新 Context，不必冷启动整段旧 History。第四，对于明显只使用一次的复杂工作，主动要求模型开 Subagent。例如知识研究大量抓网页时会产生 HTML、搜索过程和失败重试；让这些停留在 Worker Context，主线程只接收结论和证据，可以减少后续每轮对中间材料的重复cache读取。第五，在同一个连续会话里，不要为了省一点单价而频繁切换模型，尤其不要来回切换。K V Cache 依赖具体模型。主线程保持模型稳定，通常比为一两个短 Turn 临时换模型更便宜。
+
 <!-- slide:agent-futures -->
-## 40｜我对 Agent 未来方向的四个预测
+## 41｜我对 Agent 未来方向的四个预测
 
 ### 主旨
 
@@ -1957,7 +1986,7 @@ Agent 将从单机工具演进为中心化基础设施与稳定的 Agent 组合�
 ````qmd
 ## 我对Agent未来方向的四个预测 {#agent-futures .agent-futures-slide}
 
-<div class="slide-marker"><b>40</b><span>WHAT COMES NEXT</span></div>
+<div class="slide-marker"><b>41</b><span>WHAT COMES NEXT</span></div>
 
 <div class="future-grid">
 <div class="future-card infrastructure-future">
@@ -2004,7 +2033,7 @@ Agent 将从单机工具演进为中心化基础设施与稳定的 Agent 组合�
 ````qmd
 ## 感谢 · Q&A {#closing-qa .closing-slide}
 
-<div class="slide-marker"><b>41</b><span>HUMAN ↔ AGENT ↔ HUMAN</span></div>
+<div class="slide-marker"><b>42</b><span>HUMAN ↔ AGENT ↔ HUMAN</span></div>
 
 <div class="closing-stage">
 <div class="closing-thanks">
