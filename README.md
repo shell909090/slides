@@ -27,6 +27,7 @@
 * [在github上阅读linux源码](https://shell909090.github.com/slides/md/kernel-read.html) ([source](https://github.com/shell909090/slides/raw/master/md/kernel-read.md)) 2019-08-01在SHLUG月会上的演讲
 * [home bot](https://shell909090.github.com/slides/ipynb/pycon2019.slides.html) [源文件](https://github.com/shell909090/slides/blob/master/ipynb/pycon2019.ipynb) 2019-10-19在PyCon2019 HangZhou的演讲
 * [pandas计算人口和劳动力数据](https://shell909090.github.io/slides/ipynb/pycon2024.slides.html) [源文件](https://github.com/shell909090/slides/blob/master/ipynb/pycon2024.ipynb)
+* [Code Agent 的 Context——从 API、Agent Loop 到缓存与协作](https://shell909090.github.io/slides/code_agent_ctx/) ([source](https://github.com/shell909090/slides/blob/master/code_agent_ctx/pycon2026-slide.md)) PyCon 2026的演讲
 
 # LICENSE
 
